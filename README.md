@@ -10,7 +10,7 @@ The pipeline has two stages, run in order:
    student samples in a handful of step. First stage supports four teacher families, spanning all four prediction
 parameterizations (mean velocity u, velocity v, noise eps, data x). 
 2. **[Stage 2: Continuous Adversarial MeanFlow](#stage-2-continuous-adversarial-meanflow-camf).**
-   Refine the trained Stage 1 student with pure adversarial post-training. Second stage supports MeanFlow models even if they are not derived from our first stage.
+   Refine the trained stage 1 student with pure adversarial post-training. Stage 2 supports MeanFlow models even if they are not derived from stage 1.
 
 ## Setup
 
