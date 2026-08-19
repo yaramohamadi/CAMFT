@@ -1,0 +1,35 @@
+# MeanFlow-Transfer release environment (Python 3.12).
+#
+# The JAX CUDA 12 wheels below are pinned to the exact versions used for the
+# paper. torch is CPU-only here because it is used only to load the pretrained
+# teacher weights on the host before they are converted to JAX arrays, so it
+# never needs a GPU build.
+#
+# Install into a fresh virtual environment:
+#   python3.12 -m venv .venv
+#   . .venv/bin/activate
+#   pip install -r requirements.txt
+
+jax==0.4.34
+jaxlib==0.4.34
+jax-cuda12-pjrt==0.4.34
+jax-cuda12-plugin==0.4.34
+flax==0.8.5
+optax==0.2.2
+orbax-checkpoint==0.6.4
+chex==0.1.86
+clu==0.0.11
+ml_collections==1.1.0
+einops==0.8.2
+numpy==2.5.1
+scipy==1.18.0
+pillow==12.3.0
+matplotlib==3.9.2
+tqdm==4.69.0
+absl-py==2.5.0
+wandb==0.28.1
+tensorflow==2.19.1
+tensorflow-datasets==4.9.10
+tensorflow-metadata==1.21.0
+torch==2.4.0+cpu
+torchvision==0.19.0+cpu
