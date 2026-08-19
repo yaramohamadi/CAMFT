@@ -1,0 +1,110 @@
+dataset:
+    # Default dataset; launch scripts override this from DATASET_NAME.
+    root: /scratch/ymbahram/datasets/caltech-101_processed_latents
+    num_classes: 101
+    num_classes_from_data: True
+
+model:
+    model_str: imfDiT_XL_2
+    num_classes: 101
+    training_mode: imf_jvp
+    cfg_beta: 1.0
+    class_dropout_prob: 0.1
+    use_dogfit: False
+    target_use_null_class: True
+    use_auxiliary_v_head: True
+    guidance_scale_strategy: sampled
+    max_sampled_guidance_scale: 8.0
+    fixed_guidance_scale: 7.5
+    split_consistency_midpoint_strategy: uniform
+    split_consistency_midpoint_eps: 0.001
+    split_consistency_source_first_prob: 0.0
+    split_consistency_source_second_prob: 0.0
+    split_consistency_boundary_mode: exact
+    split_consistency_boundary_epsilon_distribution: half_normal
+    split_consistency_boundary_epsilon: 0.001
+    split_consistency_boundary_epsilon_min: 0.000001
+
+training:
+    log_per_step: 250
+    # Ignored while save_best_fid_only=True; best-FID checkpoints are saved
+    # whenever metric evaluation finds a new best primary FID.
+    checkpoint_per_epoch: 1
+
+    num_epochs: 200
+    max_train_steps: 40000
+    batch_size: 16
+    use_ema: False
+    learning_rate: 0.0001
+    warmup_epochs: 5
+
+    adam_b2: 0.95
+    ema_type: const
+    ema_val: 0.9998
+
+    sample_per_step: 5000
+    fid_per_step: 0
+    fid_schedule:
+        - from_step: 0
+          until_step: 20000
+          every_steps: 5000
+        - from_step: 20000
+          every_steps: 2500
+    # During training, select best_fid/ using cheap 4-step FID only.
+    # Run expensive 1/2/250-step final metrics once from the wrapper.
+    metric_num_steps:
+        - 4
+    preview_guidance_scales:
+        # - 1.0
+        - 7.5
+    preview_num_steps:
+        #- 1
+        #- 2
+        - 4
+        #- 250
+    grad_accum_steps: 2
+    save_best_fid_only: True
+    best_fid_checkpoint_dir: best_fid
+    save_eval_checkpoint_per_fid: True
+    eval_checkpoint_dir: latest_eval
+    half_precision: False
+    half_precision_dtype: float16
+
+    seed: 42
+
+fid:
+    device_batch_size: 16
+    sample_device_batch_size: 32
+    sample_log_every: 1
+    sample_first_device_only: False
+    num_samples: 10000
+    cache_ref: '/scratch/ymbahram/fid_stats/caltech-101-fid_stats.npz'
+    num_images_to_log: 16
+
+fd_dino:
+    arch: vitb14
+    model_name: ''
+    cache_ref: '/scratch/ymbahram/fdd_stats/caltech-101-fd_dino-vitb14_stats.npz'
+
+sampling:
+    # This is the primary metric step count used to save best_fid/.
+    num_steps: 4
+    method: euler
+    half_precision: False
+    half_precision_dtype: float16
+    omega: 7.5
+    t_min: 0.4
+    t_max: 0.65
+
+logging:
+    use_wandb: True
+    wandb_name: ''
+    wandb_project: 'plain_imf_finetune'
+    wandb_entity: 'yara-mohammadi-bahram-1-ecole-superieure-de-technologie'
+    wandb_tags:
+        - finetune
+        - plain-imf
+    wandb_notes: 'iMF fine-tuning initialized from iMF checkpoint'
+
+load_from: '/scratch/ymbahram/weights/iMF-XL-2-full'
+partial_load: True

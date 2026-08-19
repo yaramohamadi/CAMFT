@@ -1,0 +1,112 @@
+dataset:
+    # Pixel-space ImageFolder root (train/<class>/*.jpg). No VAE latents.
+    root: /opt/dlami/nvme/meanflow/datasets/caltech-101_images
+    name: imgnet_pixels
+    image_size: 256
+    image_channels: 3
+    num_classes: 101
+    num_classes_from_data: True
+    num_workers: 4
+    prefetch_factor: 2
+    pin_memory: False
+
+model:
+    # Decoupled single-head pixel-space JiT for MeanFlow transfer (MeFT).
+    # Splits the 32 pretrained JiT-H/16 blocks into a 24-block encoder
+    # (conditioned on t) + 8-block decoder (conditioned on r). The pretrained
+    # JiT network predicts clean images, so the iMeanFlow wrapper is told the
+    # backbone lives in data space and converts data->transport velocity.
+    model_str: imfJiT_DMF_H_16
+    num_classes: 101
+    cfg_beta: 1.0
+    P_mean: -0.8
+    P_std: 0.8
+    use_dogfit: False
+    target_use_null_class: True
+    class_dropout_prob: 0.1
+    source_prediction_space: 'v'
+    source_num_classes: 1000
+    use_auxiliary_v_head: False
+    use_context_guidance_conditioning: False
+    use_adaln_guidance_scale_conditioning: False
+    adaln_guidance_scale_init: 'timestep'
+    time_conditioning_mode: 'split'
+    # JiT predicts clean data; convert to transport velocity for the DMF target.
+    target_output_prediction_space: 'data'
+    target_velocity_map_mode: 'transport'
+    target_input_alignment_mode: 'none'
+    guidance_scale_strategy: 'fixed'
+    fixed_guidance_scale: 2.2
+    baked_guidance_blend: 0.5
+    training_guidance_interval_strategy: 'fixed'
+    training_guidance_t_min: 0.0
+    training_guidance_t_max: 1.0
+    training_guidance_start_step: 0
+
+training:
+    log_per_step: 100
+    checkpoint_per_epoch: 1000000
+
+    num_epochs: 200
+    max_train_steps: 40000
+    batch_size: 16
+    use_ema: False
+    learning_rate: 0.00001
+    warmup_epochs: 5
+
+    adam_b2: 0.95
+    grad_clip_norm: 1.0
+    ema_type: 'const'
+
+    sample_per_step: 2500
+    fid_per_step: 0
+    force_fid_per_step: 0
+    preview_num_steps:
+        - 1
+        - 4
+    preview_guidance_scales:
+        - 1
+        - 2.2
+    preview_at_step0: True
+    grad_accum_steps: 1
+    save_best_fid_only: True
+    best_fid_checkpoint_dir: 'best_fid'
+    capture_source_from_load: False
+
+    seed: 42
+
+fid:
+    device_batch_size: 8
+    sample_device_batch_size: 8
+    num_samples: 10000
+    cache_ref: '/opt/dlami/nvme/meanflow/imeanflow/files/fid_stats/caltech-101-fid_stats.npz'
+    num_images_to_log: 16
+
+fd_dino:
+    arch: vitb14
+    model_name: ''
+    cache_ref: '/opt/dlami/nvme/meanflow/imeanflow/files/fdd_stats/caltech-101-fd_dino-vitb14_stats.npz'
+
+sampling:
+    num_steps: 4
+    method: euler
+    omega: 2.2
+    t_min: 0.1
+    t_max: 1.0
+
+logging:
+    use_wandb: False
+    wandb_project: 'jit_meft'
+    wandb_entity: 'ea-fc'
+    wandb_tags:
+        - caltech101
+        - finetune
+        - jit-dmf
+    wandb_notes: 'Caltech-101 JiT-DMF pixel-space MeanFlow transfer'
+
+eval_only: False
+
+# Load the pretrained JiT-H/16-256 PyTorch weights and map them into the
+# decoupled single-head pixel-space JiT-DMF architecture (partial shape match).
+load_from: '/opt/dlami/nvme/meanflow/imeanflow/files/weights/JiT-H-16-256.pth'
+partial_load: True

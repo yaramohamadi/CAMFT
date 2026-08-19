@@ -1,0 +1,119 @@
+dataset:
+    root: /home/ens/AT74470/datasets/caltech-101_processed_latents
+    num_classes: 101
+    num_classes_from_data: True
+
+model:
+    # DDPM-v: keep the DiT-native epsilon output space inside the target model,
+    # convert it to native DDPM velocity, and let meanflow fine-tuning adapt the schedule.
+    model_str: imfDiT_DMF_XL_2
+    num_classes: 101
+    cfg_beta: 1.0
+    use_dogfit: False
+    target_use_null_class: True
+    class_dropout_prob: 0.1
+    use_auxiliary_v_head: False
+    use_context_guidance_conditioning: False
+    use_adaln_guidance_scale_conditioning: False
+    adaln_guidance_scale_init: timestep
+    time_conditioning_mode: split
+    use_ema_vc: False
+    guidance_scale_strategy: fixed
+    fixed_guidance_scale: 1.5
+    baked_guidance_blend: 0.5
+    training_guidance_interval_strategy: fixed
+    training_guidance_t_min: 0.0
+    training_guidance_t_max: 1.0
+    training_guidance_start_step: 0
+    target_output_prediction_space: noise
+    target_velocity_map_mode: dit_native
+    target_input_alignment_mode: none
+    target_native_velocity_derivative_mode: finite_difference
+    target_native_diffusion_steps: 1000
+    target_native_beta_schedule: linear
+    target_wrapper_eps: 1.0e-3
+    target_model_time_scale: 999.0
+    target_model_time_flip: True
+
+training:
+    log_per_step: 250
+    checkpoint_per_epoch: 1000000
+
+    num_epochs: 200
+    max_train_steps: 30000
+    batch_size: 8
+    use_ema: False
+    learning_rate: 0.0001
+    warmup_epochs: 5
+
+    adam_b2: 0.95
+    grad_clip_norm: 0.0
+    ema_type: const
+    ema_val: 0.9998
+
+    sample_per_step: 5000
+    fid_per_step: 0
+    fid_schedule:
+        - from_step: 0
+          every_steps: 2500
+    metric_num_steps:
+        - 4
+    preview_guidance_scales:
+        - 1.0
+        - 1.5
+        - 4.0
+    preview_num_steps:
+        - 1
+        - 2
+        - 4
+        - 16
+    debug_log_during_train: True
+    debug_log_images: True
+    debug_num_images: 4
+    debug_velocity_decode_scale: 0.1
+    grad_accum_steps: 4
+    save_best_fid_only: True
+    best_fid_checkpoint_dir: best_fid
+    save_eval_checkpoint_per_fid: True
+    eval_checkpoint_dir: latest_eval
+    fid_use_online_only: True
+    capture_source_from_load: False
+
+    seed: 42
+
+fid:
+    device_batch_size: 8
+    sample_device_batch_size: 8
+    sample_num_local_devices: 1
+    num_samples: 5000
+    cache_ref: /home/ens/AT74470/imeanflow/files/fid_stats/caltech-101-fid_stats.npz
+    num_images_to_log: 16
+
+fd_dino:
+    arch: vitb14
+    model_name: ''
+    cache_ref: /home/ens/AT74470/imeanflow/files/fdd_stats/caltech-101-fd_dino-vitb14_stats.npz
+
+sampling:
+    num_steps: 16
+    omega: 1.5
+    t_min: 0.0
+    t_max: 1.0
+
+logging:
+    use_wandb: True
+    wandb_name: CALTECH_DMF_DiTinit_DDPM-v
+    wandb_project: SIT_MFA
+    wandb_entity: yara-mohammadi-bahram-1-ecole-superieure-de-technologie
+    wandb_tags:
+        - caltech101
+        - finetune
+        - dit-dmf
+        - meanflow
+        - no-dogfit
+        - ddpm-v
+        - target-adapter
+    wandb_notes: Caltech-101 DMF fine-tuning from DiT weights with a target-side DDPM native-velocity wrapper and no Diff2Flow alignment
+
+load_from: /home/ens/AT74470/imeanflow/files/weights/DiT-XL-2-256x256.pt
+partial_load: True

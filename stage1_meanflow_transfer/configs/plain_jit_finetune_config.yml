@@ -1,0 +1,107 @@
+dataset:
+    root: /home/ens/AT74470/datasets/caltech-101_images
+    name: imgnet_pixels
+    image_size: 256
+    image_channels: 3
+    num_classes: 101
+    num_classes_from_data: True
+    num_workers: 4
+    prefetch_factor: 2
+    pin_memory: False
+
+model:
+    model_str: flaxJiT_H_16
+    num_classes: 101
+    target_use_null_class: True
+    class_dropout_prob: 0.1
+    P_mean: -0.8
+    P_std: 0.8
+    t_eps: 0.05
+    noise_scale: 1.0
+    attn_drop: 0.0
+    proj_drop: 0.2
+    uses_classifier_free_guidance: True
+
+training:
+    log_per_step: 100
+    checkpoint_per_epoch: 1000000
+
+    num_epochs: 200
+    max_train_steps: 40000
+    batch_size: 32
+    use_ema: True
+    learning_rate: 0.000003
+    warmup_epochs: 5
+
+    adam_b2: 0.95
+    optimizer: adamw
+    optimizer_mu_dtype: float16
+    weight_decay: 0.0
+    lion_b2: 0.99
+    sgd_momentum: null
+    ema_type: const
+    ema_val: 0.9998
+
+    sample_per_step: 2500
+    fid_per_step: 0
+    fid_schedule:
+        - from_step: 0
+          every_steps: 2500
+    metric_num_steps:
+        - 4
+    preview_guidance_scales:
+        - 1
+        - 2
+        - 4
+    preview_num_steps:
+        - 1
+        - 4
+        - 50
+    preview_at_step0: True
+    grad_accum_steps: 1
+    save_best_fid_only: True
+    save_best_fid_eval_state_only: False
+    best_fid_checkpoint_dir: best_fid
+    save_eval_checkpoint_per_fid: True
+    eval_checkpoint_dir: latest_eval
+    half_precision: False
+    half_precision_dtype: float16
+
+    seed: 42
+
+fid:
+    device_batch_size: 16
+    sample_device_batch_size: 8
+    sample_log_every: 1
+    sample_first_device_only: False
+    num_samples: 10000
+    cache_ref: /home/ens/AT74470/imeanflow/files/fid_stats/caltech-101-fid_stats.npz
+    num_images_to_log: 16
+
+fd_dino:
+    arch: vitb14
+    model_name: ''
+    cache_ref: /home/ens/AT74470/imeanflow/files/fdd_stats/caltech-101-fd_dino-vitb14_stats.npz
+
+sampling:
+    num_steps: 4
+    method: heun
+    half_precision: False
+    half_precision_dtype: float16
+    omega: 2.2
+    cfg_scale: 2.2
+    t_min: 0.1
+    t_max: 1.0
+
+logging:
+    use_wandb: True
+    wandb_name: ''
+    wandb_project: plain_jit_finetune
+    wandb_entity: yara-mohammadi-bahram-1-ecole-superieure-de-technologie
+    wandb_tags:
+        - finetune
+        - plain-jit
+    wandb_notes: JiT-H/16 pixel-space fine-tuning
+
+load_from: /home/ens/AT74470/imeanflow/files/weights/JiT-H-16-256.pth
+partial_load: True

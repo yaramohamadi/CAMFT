@@ -1,0 +1,88 @@
+dataset:
+    root: /home/ens/AT74470/datasets/caltech-101_processed_latents
+    num_classes: 101
+    num_classes_from_data: True
+
+model:
+    # Decoupled single-head SiT path for Caltech fine-tuning.
+    # This variant uses a 20-block encoder and 8-block decoder with
+    # boundary supervision derived from u(x_t, t, t, y).
+    model_str: imfSiT_DMF_XL_2
+    num_classes: 101
+    cfg_beta: 1.0
+    use_dogfit: False
+    target_use_null_class: True
+    class_dropout_prob: 0.1
+    source_prediction_space: 'v'
+    source_num_classes: 1000
+    use_auxiliary_v_head: False
+    use_context_guidance_conditioning: False
+    use_adaln_guidance_scale_conditioning: False
+    adaln_guidance_scale_init: 'timestep'
+    time_conditioning_mode: 'split'
+    guidance_scale_strategy: 'fixed'
+    fixed_guidance_scale: 1.5
+    baked_guidance_blend: 0.5
+    training_guidance_interval_strategy: 'fixed'
+    training_guidance_t_min: 0.0
+    training_guidance_t_max: 1.0
+    training_guidance_start_step: 0
+
+training:
+    log_per_step: 250
+    checkpoint_per_epoch: 1000000
+
+    num_epochs: 200
+    max_train_steps: 30000
+    batch_size: 16
+    use_ema: False
+    learning_rate: 0.0001
+    warmup_epochs: 5
+
+    adam_b2: 0.95
+    ema_type: 'const'
+
+    sample_per_step: 500
+    fid_per_step: 1000
+    debug_log_during_train: True
+    debug_log_images: True
+    debug_num_images: 4
+    debug_velocity_decode_scale: 0.1
+    grad_accum_steps: 2
+    save_best_fid_only: True
+    best_fid_checkpoint_dir: 'best_fid'
+    capture_source_from_load: False
+
+    seed: 42
+
+fid:
+    device_batch_size: 8
+    num_samples: 10000
+    cache_ref: '/home/ens/AT74470/imeanflow/files/fid_stats/caltech-101-fid_stats.npz'
+    num_images_to_log: 100
+
+fd_dino:
+    arch: vitb14
+    model_name: ''
+    cache_ref: '/home/ens/AT74470/imeanflow/files/fdd_stats/caltech-101-fd_dino-vitb14_stats.npz'
+
+sampling:
+    num_steps: 1
+    omega: 1.5
+    t_min: 0.0
+    t_max: 1.0
+
+logging:
+    use_wandb: True
+    wandb_project: 'imfa_init'
+    wandb_entity: 'yara-mohammadi-bahram-1-ecole-superieure-de-technologie'
+    wandb_tags:
+        - caltech101
+        - finetune
+        - sit-dmf
+    wandb_notes: 'Caltech-101 SiT-DMF fine-tuning'
+
+# Load the pretrained SiT-XL-2-256 PyTorch weights and map them into the
+# decoupled single-head SiT-DMF architecture.
+load_from: '/home/ens/AT74470/imeanflow/files/weights/SiT-XL-2-256.pt'
+partial_load: True
