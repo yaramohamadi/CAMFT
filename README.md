@@ -25,11 +25,6 @@ parameterizations:
 | `jit`  | JiT-H/16               | input x         | pixel  |
 
 Second stage supports MeanFlow family models, which can be derived from the first stage. 
-The two stages are kept as separate packages on purpose. They share most of their
-code, but a few modules (`imf.py`, `configs/default.py`, `utils/sample_util.py`,
-`models/imfDiT.py`) carry stage-specific changes that cannot be collapsed into
-one shared copy without breaking one of the stages. Each package is therefore
-self-contained and runs on its own.
 
 ## Setup
 
