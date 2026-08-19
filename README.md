@@ -118,66 +118,6 @@ stats/
 Fine-tunes a pretrained teacher into a few-step MeanFlow student on a target
 domain.
 
-### Structure
-
-```
-stage1_meanflow_transfer/
-├── train.sh                       # ENTRY POINT: bash train.sh <family> [dataset]
-├── main.py                        # entry point for imf / sit / dit (latent space)
-├── main_imf_jit.py                # entry point for jit MF-T (pixel space)
-├── main_jit.py                    # entry point for plain JiT fine-tuning (baseline)
-├── train.py                       # MF-T training + eval loop (latent)
-├── train_imf_jit.py               # MF-T training + eval loop (pixel; JiT)
-├── train_jit.py                   # plain JiT fine-tuning loop (baseline)
-├── imf.py                         # MeanFlow / DMF objective + guided sampler
-├── sit.py                         # plain SiT wrapper (official transport objective)
-├── dit.py                         # plain DiT wrapper (original diffusion objective)
-├── plain_jit.py                   # plain JiT wrapper (pixel denoising objective)
-├── configs/
-│   ├── load_config.py             # config mode -> <mode>_config.yml, merged over default.py
-│   ├── default.py                 # every default field, with types
-│   ├── caltech_dit_dmf_ddpmv_config.yml     # dit  MF-T
-│   ├── caltech_sit_dmf_finetune_config.yml  # sit  MF-T
-│   ├── caltech_jit_dmf_meft_config.yml      # jit  MF-T
-│   ├── plain_imf_finetune_config.yml        # imf  MF-T
-│   └── plain_jit_finetune_config.yml        # plain JiT baseline
-├── models/
-│   ├── imfDiT.py                  # DiT/SiT/iMF backbone (Flax); shared by all latent families
-│   ├── jit.py                     # JiT backbone (Flax, pixel space, BHWC)
-│   ├── embedder.py                # timestep / label / patch embedders
-│   ├── convnext.py                # ConvNeXt features for the perceptual auxiliary loss
-│   ├── pmfDiT.py, pmf_embedder.py, pmf_torch_models.py   # pMF variant (not used in the paper runs)
-│   └── torch_DiT.py, torch_SiT.py, torch_models.py       # teacher-checkpoint readers (torch -> JAX)
-├── utils/
-│   ├── imf_param_util.py          # source -> shared-velocity parameterization mapping
-│   ├── dit_diffusion.py           # DDPM schedules and eps/v conversions (DiT source)
-│   ├── sit_transport_jax.py       # SiT transport in JAX
-│   ├── sit_official_transport.py  # reference SiT transport, for parity checks
-│   ├── sample_util.py             # MeanFlow few-step guided sampling
-│   ├── dit_sample_util.py         # many-step DDPM sampling (teacher baselines)
-│   ├── sit_sample_util.py         # SiT ODE sampling (teacher baselines)
-│   ├── fid_util.py                # FID against stats/, 10k samples
-│   ├── dino_util.py               # FD-DINO metric
-│   ├── dinov2_jax.py              # pure-JAX DINOv2 ViT-B/14 (HF weights; no torch at eval)
-│   ├── jax_fid/                   # InceptionV3 in JAX (inception.py, resize.py, utils.py)
-│   ├── vae_util.py                # Stable Diffusion VAE decode for previews
-│   ├── input_pipeline.py          # image pipeline (pixel families)
-│   ├── data_util.py               # latent pipeline (latent families)
-│   ├── trainstate_util.py         # train state, optimizer, grad accumulation
-│   ├── sit_trainstate_util.py     # train state for the plain SiT path
-│   ├── state_util.py              # sharding / replication helpers
-│   ├── ckpt_util.py               # Orbax save / restore, best-FID tracking
-│   ├── ema_util.py                # EMA of parameters
-│   ├── lr_utils.py                # learning-rate schedules
-│   ├── muon_util.py               # Muon optimizer fallback for older optax
-│   ├── auxloss_util.py            # perceptual auxiliary losses
-│   ├── preview_util.py            # sample-grid previews
-│   ├── eval_csv_util.py           # metrics -> CSV
-│   └── logging_util.py            # W&B / disk writer
-└── scripts/                       # best-FID eval drivers used for the paper tables
-    ├── eval_best_fid_steps.sh                # generic driver
-    └── eval_best_fid_steps_plain_{dit,sit,jit,imf}.sh   # per-family teacher baselines
-```
 
 ### Config
 
@@ -241,47 +181,6 @@ The trailing numbers are the NFEs to evaluate. Every metric uses 10,000 samples.
 Refines a Stage 1 student with pure adversarial post-training (`lambda_imf = 0`).
 Only the generator parameters are restored from Stage 1; the optimizer and the
 discriminator start fresh.
-
-### Structure
-
-```
-stage2_continuous_adversarial_refinement/
-├── posttrain.sh                   # ENTRY POINT: bash posttrain.sh <family> <ckpt> [dataset]
-├── main_caimf.py                  # entry point for imf CAMF
-├── main_caimf_sit_meft.py         # entry point for sit and dit CAMF (shared backbone class)
-├── main_caimf_jit_meft.py         # entry point for jit CAMF (pixel space)
-├── main_afm.py, main_afm_sit_meft.py   # AFM baseline entry points (endpoint-only adversary)
-├── caimf.py                       # CAMF losses and discriminator/generator step scheduling
-├── caimf_sit_meft.py              # finite-interval CAMF logits, forward-time convention
-├── afm.py, afm_sit_meft.py        # AFM baseline losses
-├── train_caimf.py                 # CAMF post-training loop (latent, iMF-native)
-├── train_caimf_sit_meft.py        # thin adapter of train_caimf.py for sit / dit students
-├── train_caimf_jit_meft.py        # pixel-space CAMF loop for jit students
-├── train_sit_meft_common.py       # shared forward-time terms for latent MeFT students
-├── train_jit_meft_common.py       # model builder for pixel-space MeFT students
-├── train_afm.py, train_afm_sit_meft.py  # AFM baseline loops
-├── train_jit.py                   # plain JiT loop (kept for the pixel data pipeline)
-├── imf.py, sit.py, dit.py, plain_jit.py  # generator wrappers (same roles as Stage 1)
-├── configs/
-│   ├── load_config.py, default.py
-│   ├── caltech_imf_caimf_posttrain_config.yml       # imf CAMF
-│   ├── caltech_sit_meft_caimf_posttrain_config.yml  # sit CAMF
-│   ├── caltech_dit_meft_caimf_posttrain_config.yml  # dit CAMF
-│   └── caltech_jit_meft_caimf_posttrain_config.yml  # jit CAMF
-├── models/
-│   ├── caimf_discriminator.py         # potential discriminator for iMF students
-│   ├── sit_meft_discriminator.py      # scalar potential head for sit / dit students
-│   ├── jit_meft_discriminator.py      # scalar potential head for jit students (pixel)
-│   ├── cafm_imf_discriminator.py      # original CAFM (instantaneous) discriminator, for ablation
-│   ├── afm_discriminator.py           # AFM endpoint-only discriminator, for comparison
-│   └── imfDiT.py, jit.py, embedder.py, convnext.py, pmf*.py, torch_*.py   # as in Stage 1
-├── utils/                          # same helper set as Stage 1 (see above)
-└── scripts/
-    ├── run_final_evals.sh                              # NFE 1 and 2 final eval, all families
-    ├── eval_best_fid_steps.sh                          # generic driver
-    ├── eval_best_fid_steps_sit_meft_adversarial.sh     # latent students (sit / dit)
-    └── eval_best_fid_steps_plain_imf.sh                # iMF students
-```
 
 ### Config
 
