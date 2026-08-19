@@ -1,57 +1,5 @@
-# MeanFlow-Transfer and Continuous Adversarial MeanFlow
-
-Official code for *Adaptation and Acceleration of Diffusion and Flow Models via
-MeanFlow Transfer and Continuous Adversarial Refinement*.
-
-- [Abstract](#abstract)
-- [Method](#method)
-- [Setup](#setup)
-  - [Environment](#environment)
-  - [Teacher Weights](#teacher-weights)
-  - [Data](#data)
-  - [Reference Statistics](#reference-statistics)
-  - [Weights & Biases (W&B) Logging](#weights--biases-wb-logging)
-- [Stage 1: MeanFlow-Transfer (MF-T)](#stage-1-meanflow-transfer-mf-t)
-  - [Structure](#structure)
-  - [Config](#config)
-  - [1) Train](#1-train)
-  - [2) Evaluate a Checkpoint](#2-evaluate-a-checkpoint)
-- [Stage 2: Continuous Adversarial MeanFlow (CAMF)](#stage-2-continuous-adversarial-meanflow-camf)
-  - [Structure](#structure-1)
-  - [Config](#config-1)
-  - [1) Post-train](#1-post-train)
-  - [2) Final NFE 1 and 2 Evaluation](#2-final-nfe-1-and-2-evaluation)
-- [Released Checkpoints](#released-checkpoints)
-- [Reproducing the Paper](#reproducing-the-paper)
-- [Notes](#notes)
-- [Contact](#contact)
-- [Citation](#citation)
-- [Acknowledgments](#acknowledgments)
-
-## Abstract
-
-Training fast generators on new domains with limited data remains challenging for
-two reasons. First, adapting a pretrained diffusion or flow model to a new domain
-leaves its costly multi-step sampling unaddressed, and existing acceleration
-methods are tied to the source parameterization -- $\epsilon$, $x$, $v$, or $u$ --
-leaving heterogeneous pretrained models with no common acceleration target.
-Second, while adversarial refinement is proven effective for few-step quality, it
-is formulated only for instantaneous-velocity flows, not for the finite-interval
-average velocities that MeanFlow (MF) models predict. We address both problems.
-We propose **MeanFlow-Transfer (`MF-T`)**, which maps heterogeneous source
-outputs into a shared velocity representation, uses it to initialize an MF
-generator from the source weights, and optimizes an MF objective on the target
-domain. This unifies adaptation and acceleration in a single training loop across
-a broad range of pretrained models. We then introduce **Continuous Adversarial
-MeanFlow (`CAMF`)**, a post-training stage that extends continuous adversarial
-flow models from instantaneous velocities to MF's finite-interval average
-velocities. `CAMF` contrasts changes in a learned potential between real and
-predicted interval endpoints, recovering fine detail that MF regression averages
-away, and reduces to the instantaneous criterion in the vanishing-interval limit.
-Adapting four ImageNet-based source models -- DiT ($\epsilon$), SiT ($v$),
-JiT ($x$), iMF ($u$) -- to five target domains, `MF-T` with `CAMF` matches or
-exceeds the fine-tuned teacher in FID and FDD at up to 125x fewer Neural Function
-Evaluations (NFEs), while `CAMF` improves `MF-T`'s few-step FID by 29% on average.
+# Continuous Adversarial MeanFlow Transfer
+Official code for *Continuous Adversarial MeanFlow Transfer*.
 
 ## Method
 
@@ -66,7 +14,7 @@ The pipeline has two stages, run in order:
    keeps its guidance behaviour; a discriminator scores the guided few-step
    endpoint, sharpening the one and two step samples.
 
-Both stages support four teacher families, spanning all four prediction
+First stage supports four teacher families, spanning all four prediction
 parameterizations:
 
 | family | teacher                | predicts        | space  |
@@ -76,36 +24,7 @@ parameterizations:
 | `dit`  | DiT-XL/2               | noise eps       | latent |
 | `jit`  | JiT-H/16               | input x         | pixel  |
 
-Five target domains are supported. The slug in the first column is what the
-launchers take on the command line:
-
-| slug           | dataset       | classes | source |
-| -------------- | ------------- | ------- | ------ |
-| `artbench-10`  | ArtBench-10   | 10      | [liaopeiyuan/artbench](https://github.com/liaopeiyuan/artbench) |
-| `caltech-101`  | Caltech-101   | 101     | [CaltechDATA](https://data.caltech.edu/records/mzrjq-6wc02) |
-| `cub-200-2011` | CUB-200-2011  | 200     | [Caltech Vision](https://www.vision.caltech.edu/datasets/cub_200_2011/) &middot; [CaltechDATA](https://data.caltech.edu/records/65de6-vp158) |
-| `food-101`     | Food-101      | 101     | [ETH Zurich](https://data.vision.ee.ethz.ch/cvl/datasets_extra/food-101/) &middot; [HF](https://huggingface.co/datasets/ethz/food101) |
-| `stanford-cars`| Stanford Cars | 196     | [HF mirror](https://huggingface.co/datasets/Donghyun99/Stanford-Cars) &middot; [Kaggle mirror](https://www.kaggle.com/datasets/jutrera/stanford-car-dataset-by-classes-folder) |
-
-The original Stanford Cars page at `ai.stanford.edu/~jkrause/cars/` is no longer
-served, so the mirrors above are the practical download route (`torchvision`'s
-`StanfordCars` loader is likewise
-[download-broken](https://pytorch.org/vision/stable/generated/torchvision.datasets.StanfordCars.html)
-and expects a pre-downloaded copy).
-
-Top level:
-
-```
-.
-├── stage1_meanflow_transfer/                  # Stage 1: MF-T (code, configs, launcher)
-├── stage2_continuous_adversarial_refinement/  # Stage 2: CAMF (code, configs, launcher)
-├── stats/                                     # FID / FD-DINO reference statistics (Git LFS)
-├── datasets.sh                                # target-domain table shared by both launchers
-├── requirements.txt                           # pinned Python environment (JAX, CUDA 12)
-├── WEIGHTS.md                                 # where to download the teacher weights
-└── README.md
-```
-
+Second stage supports MeanFlow family models, which can be derived from the first stage. 
 The two stages are kept as separate packages on purpose. They share most of their
 code, but a few modules (`imf.py`, `configs/default.py`, `utils/sample_util.py`,
 `models/imfDiT.py`) carry stage-specific changes that cannot be collapsed into
@@ -128,9 +47,6 @@ python3.12 -m venv .venv
 pip install -r requirements.txt
 ```
 
-If you cloned before running `git lfs install`, the files in `stats/` will be
-~133-byte pointer files; run `git lfs pull` to fetch the real ones.
-
 The pinned set installs `torch` as a **CPU** build on purpose. Torch is only used
 to read the released PyTorch teacher checkpoints on the host before their tensors
 are converted to JAX arrays; all training and sampling runs in JAX.
@@ -139,8 +55,7 @@ Every run in the paper used a single 80 GB H100.
 
 ### Teacher Weights
 
-Both stages start from publicly released ImageNet-256 teacher checkpoints, which
-are **not** bundled here. Download each from its original source, put all four in
+First stage starts from publicly released ImageNet-256 teacher checkpoints. Download each from its original source, put all four in
 one folder, and point `WEIGHTS_DIR` at it. Expected filenames:
 
 | family | filename              |
@@ -150,13 +65,21 @@ one folder, and point `WEIGHTS_DIR` at it. Expected filenames:
 | `jit`  | `JiT-H-16-256.pth`    |
 | `imf`  | `iMF-XL-2-full`       |
 
-See [`WEIGHTS.md`](WEIGHTS.md) for sources and details (`iMF-XL-2-full` is a
-checkpoint *directory*, not a single file).
+See [`WEIGHTS.md`](WEIGHTS.md) for sources and details.
 
 ### Data
 
-The image and latent data is not bundled (size). Build a `data/` directory with
-one subfolder per domain you want to run:
+Five target domains are tested:
+
+| slug           | dataset       | classes | source |
+| -------------- | ------------- | ------- | ------ |
+| `artbench-10`  | ArtBench-10   | 10      | [liaopeiyuan/artbench](https://github.com/liaopeiyuan/artbench) |
+| `caltech-101`  | Caltech-101   | 101     | [CaltechDATA](https://data.caltech.edu/records/mzrjq-6wc02) |
+| `cub-200-2011` | CUB-200-2011  | 200     | [Caltech Vision](https://www.vision.caltech.edu/datasets/cub_200_2011/) &middot; [CaltechDATA](https://data.caltech.edu/records/65de6-vp158) |
+| `food-101`     | Food-101      | 101     | [ETH Zurich](https://data.vision.ee.ethz.ch/cvl/datasets_extra/food-101/) &middot; [HF](https://huggingface.co/datasets/ethz/food101) |
+| `stanford-cars`| Stanford Cars | 196     | [HF mirror](https://huggingface.co/datasets/Donghyun99/Stanford-Cars) &middot; [Kaggle mirror](https://www.kaggle.com/datasets/jutrera/stanford-car-dataset-by-classes-folder) |
+
+Build a `data/` directory with one subfolder per domain you want to run:
 
 ```
 data/
@@ -164,9 +87,7 @@ data/
 └── <dataset>_images/              # raw images   -> used by jit (pixel space)
 ```
 
-`<dataset>` is one of the five slugs from the
-[target-domain table](#method). Download the images from the source linked there,
-then precompute the VAE latents with the same Stable Diffusion VAE used by the
+Precompute the VAE latents with the same Stable Diffusion VAE used by the
 teachers — [`pcuenq/sd-vae-ft-mse-flax`](https://huggingface.co/pcuenq/sd-vae-ft-mse-flax),
 selected by `dataset.vae: mse` in the configs and loaded by `utils/vae_util.py`.
 The reference statistics in `stats/` were computed on these same processed sets,
@@ -191,28 +112,6 @@ stats/
 ├── food-101-fd_dino-vitb14_stats.npz
 └── stanford-cars-fd_dino-vitb14_stats.npz
 ```
-
-`datasets.sh` maps a dataset slug to its data roots and to these two files, and
-both launchers source it. The filenames are not uniformly spelled because they
-are kept exactly as produced, so the table names each one explicitly. `ds_resolve`
-hard-fails if a reference file is missing, which is the first thing to check if a
-launcher exits immediately.
-
-### Weights & Biases (W&B) Logging
-
-W&B is **off** by default in every config and in both launchers. To turn it on,
-set `USE_WANDB=True` and log in first:
-
-```bash
-wandb login
-USE_WANDB=True bash train.sh dit cub-200-2011
-```
-
-`wandb_entity` is empty in every config, so runs go to your own default entity.
-The project and run names come from `logging.wandb_project` / `logging.wandb_name`
-in the config, and both are overridable on the command line
-(`--config.logging.wandb_project=...`). When W&B is off, preview grids and
-metrics are written to the run directory instead.
 
 ## Stage 1: MeanFlow-Transfer (MF-T)
 
