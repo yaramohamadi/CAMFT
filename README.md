@@ -76,8 +76,22 @@ parameterizations:
 | `dit`  | DiT-XL/2               | noise eps       | latent |
 | `jit`  | JiT-H/16               | input x         | pixel  |
 
-Five target domains are supported: `artbench-10`, `caltech-101`,
-`cub-200-2011`, `food-101`, `stanford-cars`.
+Five target domains are supported. The slug in the first column is what the
+launchers take on the command line:
+
+| slug           | dataset       | classes | source |
+| -------------- | ------------- | ------- | ------ |
+| `artbench-10`  | ArtBench-10   | 10      | [liaopeiyuan/artbench](https://github.com/liaopeiyuan/artbench) |
+| `caltech-101`  | Caltech-101   | 101     | [CaltechDATA](https://data.caltech.edu/records/mzrjq-6wc02) |
+| `cub-200-2011` | CUB-200-2011  | 200     | [Caltech Vision](https://www.vision.caltech.edu/datasets/cub_200_2011/) &middot; [CaltechDATA](https://data.caltech.edu/records/65de6-vp158) |
+| `food-101`     | Food-101      | 101     | [ETH Zurich](https://data.vision.ee.ethz.ch/cvl/datasets_extra/food-101/) &middot; [HF](https://huggingface.co/datasets/ethz/food101) |
+| `stanford-cars`| Stanford Cars | 196     | [HF mirror](https://huggingface.co/datasets/Donghyun99/Stanford-Cars) &middot; [Kaggle mirror](https://www.kaggle.com/datasets/jutrera/stanford-car-dataset-by-classes-folder) |
+
+The original Stanford Cars page at `ai.stanford.edu/~jkrause/cars/` is no longer
+served, so the mirrors above are the practical download route (`torchvision`'s
+`StanfordCars` loader is likewise
+[download-broken](https://pytorch.org/vision/stable/generated/torchvision.datasets.StanfordCars.html)
+and expects a pre-downloaded copy).
 
 Top level:
 
@@ -150,11 +164,15 @@ data/
 └── <dataset>_images/              # raw images   -> used by jit (pixel space)
 ```
 
-`<dataset>` is one of the five slugs above. Download each dataset from its
-official source for the pixel images, and precompute the VAE latents with the
-same Stable Diffusion VAE used by the teachers. The reference statistics in
-`stats/` were computed on these same processed sets, so the images must be
-preprocessed the same way for FID and FD-DINO to be comparable to the paper.
+`<dataset>` is one of the five slugs from the
+[target-domain table](#method). Download the images from the source linked there,
+then precompute the VAE latents with the same Stable Diffusion VAE used by the
+teachers — [`pcuenq/sd-vae-ft-mse-flax`](https://huggingface.co/pcuenq/sd-vae-ft-mse-flax),
+selected by `dataset.vae: mse` in the configs and loaded by `utils/vae_util.py`.
+The reference statistics in `stats/` were computed on these same processed sets,
+so the images must be preprocessed the same way — the guided-diffusion style
+center crop to 256x256 in `utils/input_pipeline.py` — for FID and FD-DINO to be
+comparable to the paper.
 
 ### Reference Statistics
 
@@ -304,8 +322,8 @@ Results land in `runs/<dataset>_<family>_<stamp>/`, with the best-FID checkpoint
 in `best_fid/checkpoint_*`. That directory is what you pass to Stage 2.
 
 The class count is read from the data itself (`num_classes_from_data`), so each
-domain resolves to its own count without an override: ArtBench-10 10,
-Caltech-101 101, CUB-200 200, Food-101 101, Stanford Cars 196.
+domain resolves to the count in the
+[target-domain table](#method) without an override.
 
 ### 2) Evaluate a Checkpoint
 
