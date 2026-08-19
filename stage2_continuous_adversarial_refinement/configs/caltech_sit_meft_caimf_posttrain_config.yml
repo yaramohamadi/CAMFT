@@ -1,0 +1,98 @@
+dataset:
+    root: /home/ens/Zdehghani/datasets/caltech-101_processed_latents
+    image_size: 32
+    image_channels: 4
+    vae: mse
+    name: caltech101_latent
+    num_classes: 101
+    num_classes_from_data: True
+    num_workers: 4
+    prefetch_factor: 2
+    pin_memory: True
+
+model:
+    model_str: imfSiT_DMF_XL_2
+    num_classes: 101
+    training_mode: imf_jvp
+    target_use_null_class: True
+    use_auxiliary_v_head: False
+    use_dogfit: False
+    class_dropout_prob: 0.1
+    cfg_beta: 1.0
+    guidance_scale_strategy: fixed
+    fixed_guidance_scale: 1.5
+    use_context_guidance_conditioning: False
+    use_adaln_guidance_scale_conditioning: False
+    adaln_guidance_scale_init: timestep
+    use_adaln_condition_mixing: False
+    decoder_only_guidance_conditioning: False
+    time_conditioning_mode: split
+
+caimf:
+    lambda_imf: 0.0
+    lambda_adv: 1.0
+    lambda_ot: 0.0
+    lambda_cp: 0.001
+    interval_eps: 0.001
+    gen_learning_rate: 0.00001
+    dis_learning_rate: 0.00001
+    adam_beta1: 0.0
+    adam_beta2: 0.95
+    weight_decay: 0.0
+    discriminator_warmup_batches: 5000
+    discriminator_steps_per_cycle: 4
+    discriminator_updates: True
+    freeze_discriminator_backbone: False
+    load_generator_ema: False
+    max_posttrain_batches: 150000
+
+training:
+    num_epochs: 1000
+    batch_size: 2
+    grad_accum_steps: 1
+    use_ema: True
+    ema_val: 0.9999
+    log_per_step: 100
+    checkpoint_per_epoch: 1
+    sample_per_step: 5000
+    preview_num_steps: [1, 2, 4]
+    preview_num_images: 16
+    fid_per_step: 0
+    fid_schedule:
+        - from_step: 5000
+          every_steps: 5000
+    metric_num_steps: [4]
+    save_best_fid_only: True
+    save_best_fid_eval_state_only: True
+    best_fid_checkpoint_dir: best_fid
+    save_eval_checkpoint_per_fid: False
+    eval_checkpoint_dir: latest_eval
+    seed: 42
+
+fid:
+    cache_ref: /home/ens/Zdehghani/imeanflow/files/fid_stats/caltech-101-fid_stats.npz
+    device_batch_size: 1
+    sample_device_batch_size: 1
+    sample_log_every: 25
+    num_samples: 10000
+
+fd_dino:
+    arch: vitb14
+    cache_ref: /home/ens/Zdehghani/imeanflow/files/fdd_stats/caltech-101-fd_dino-vitb14_stats.npz
+
+sampling:
+    num_classes: 101
+    num_steps: 4
+    omega: 1.5
+    t_min: 0.0
+    t_max: 1.0
+
+logging:
+    use_wandb: False
+    wandb_project: caimf_sit_meft
+    wandb_name: caltech_sit_meft_caimf
+    wandb_entity: ''
+    wandb_tags: [caltech101, sit-meft, caimf, posttrain]
+
+load_from: ''
+partial_load: True

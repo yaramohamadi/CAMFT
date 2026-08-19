@@ -1,0 +1,123 @@
+# JiT-DMF CA-iMF (CAMF) pure-adversarial post-training config.
+# Cloned from caltech_jit_dmf_meft_config.yml (pixel-space JiT-H/16 MeFT student)
+# with the CAIMF adversarial block added. Differences from the SiT/DiT CAMF
+# configs, ALL deliberate:
+#   * PIXEL space (256x256x3) not latent -> smaller batch + grad_accum (memory).
+#   * TRANSPORT convention (data->velocity), matches the arch-agnostic adversarial
+#     forward directly (no dit_native mapping needed).
+#   * gen/dis LR = 1e-6 = 0.1x JiT's base FT LR (1e-5). SiT/DiT used 1e-5 = 0.1x
+#     their base 1e-4. See feedback_caimf_lr_scaling.
+#   * operating point from JiT MF-A: omega=2.2, t in [0.1, 1.0], fixed guidance 2.2.
+# CAMF-invariant knobs (lambda_adv=1, cp=0.001, adam(0,0.95), 5000 D-warmup,
+# 4:1 D:G, 150k batches) are IDENTICAL to SiT/DiT.
+dataset:
+    root: /opt/dlami/nvme/meanflow/datasets/caltech-101_images
+    name: imgnet_pixels
+    image_size: 256
+    image_channels: 3
+    num_classes: 101
+    num_classes_from_data: True
+    num_workers: 4
+    prefetch_factor: 2
+    pin_memory: False
+    vae: none  # placeholder: JiT pixel decode ignores vae (PixelImageManager)
+
+model:
+    model_str: imfJiT_DMF_H_16
+    num_classes: 101
+    training_mode: imf_jvp
+    target_use_null_class: True
+    use_auxiliary_v_head: False
+    use_dogfit: False
+    class_dropout_prob: 0.1
+    cfg_beta: 1.0
+    P_mean: -0.8
+    P_std: 0.8
+    # --- guidance operating point (JiT MF-A: fixed omega=2.2) ---
+    guidance_scale_strategy: fixed
+    fixed_guidance_scale: 2.2
+    use_training_guidance: True
+    training_guidance_interval_strategy: fixed
+    training_guidance_t_min: 0.0
+    training_guidance_t_max: 1.0
+    training_guidance_start_step: 0
+    # --- DMF split-time convention (same _DMF gate) ---
+    time_conditioning_mode: split
+    # --- TRANSPORT target mapping: JiT predicts clean data -> transport velocity ---
+    target_output_prediction_space: data
+    target_velocity_map_mode: transport
+    target_input_alignment_mode: none
+    # --- source side (v-space teacher), kept for parity ---
+    source_prediction_space: v
+    source_num_classes: 1000
+    source_velocity_map_mode: transport
+
+caimf:
+    lambda_imf: 0.0
+    lambda_adv: 1.0
+    lambda_ot: 0.0
+    lambda_cp: 0.001
+    interval_eps: 0.001
+    gen_learning_rate: 0.000001
+    dis_learning_rate: 0.000001
+    adam_beta1: 0.0
+    adam_beta2: 0.95
+    weight_decay: 0.0
+    discriminator_warmup_batches: 5000
+    discriminator_steps_per_cycle: 4
+    discriminator_updates: True
+    freeze_discriminator_backbone: False
+    load_generator_ema: False
+    max_posttrain_batches: 150000
+
+training:
+    num_epochs: 1000
+    batch_size: 2
+    grad_accum_steps: 1
+    use_ema: True
+    ema_val: 0.9999
+    log_per_step: 100
+    checkpoint_per_epoch: 1
+    sample_per_step: 5000
+    preview_num_steps: [1, 2, 4]
+    preview_num_images: 16
+    fid_per_step: 0
+    fid_schedule:
+        - from_step: 5000
+          every_steps: 5000
+    metric_num_steps: [4]
+    save_best_fid_only: True
+    save_best_fid_eval_state_only: True
+    best_fid_checkpoint_dir: best_fid
+    save_eval_checkpoint_per_fid: False
+    eval_checkpoint_dir: latest_eval
+    seed: 42
+
+fid:
+    cache_ref: /opt/dlami/nvme/meanflow/imeanflow/files/fid_stats/caltech-101-fid_stats.npz
+    device_batch_size: 4
+    sample_device_batch_size: 4
+    sample_log_every: 25
+    num_samples: 10000
+
+fd_dino:
+    arch: vitb14
+    cache_ref: /opt/dlami/nvme/meanflow/imeanflow/files/fdd_stats/caltech-101-fd_dino-vitb14_stats.npz
+
+sampling:
+    num_classes: 101
+    num_steps: 4
+    method: euler
+    omega: 2.2
+    t_min: 0.1
+    t_max: 1.0
+
+logging:
+    use_wandb: False
+    wandb_project: caimf_jit_meft
+    wandb_name: caltech_jit_meft_caimf
+    wandb_entity: ""
+    wandb_tags: [caltech101, jit-meft, caimf, posttrain]
+
+load_from: ""
+partial_load: True
