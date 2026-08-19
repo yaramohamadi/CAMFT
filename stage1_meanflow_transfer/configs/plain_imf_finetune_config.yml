@@ -1,6 +1,6 @@
 dataset:
     # Default dataset; launch scripts override this from DATASET_NAME.
-    root: /scratch/ymbahram/datasets/caltech-101_processed_latents
+    root: data/caltech-101_processed_latents
     num_classes: 101
     num_classes_from_data: True
 
@@ -78,13 +78,13 @@ fid:
     sample_log_every: 1
     sample_first_device_only: False
     num_samples: 10000
-    cache_ref: '/scratch/ymbahram/fid_stats/caltech-101-fid_stats.npz'
+    cache_ref: 'stats/caltech-101-fid_stats.npz'
     num_images_to_log: 16
 
 fd_dino:
     arch: vitb14
     model_name: ''
-    cache_ref: '/scratch/ymbahram/fdd_stats/caltech-101-fd_dino-vitb14_stats.npz'
+    cache_ref: 'stats/caltech-101-fd_dino-vitb14_stats.npz'
 
 sampling:
     # This is the primary metric step count used to save best_fid/.
@@ -100,11 +100,11 @@ logging:
     use_wandb: True
     wandb_name: ''
     wandb_project: 'plain_imf_finetune'
-    wandb_entity: 'yara-mohammadi-bahram-1-ecole-superieure-de-technologie'
+    wandb_entity: ""
     wandb_tags:
         - finetune
         - plain-imf
     wandb_notes: 'iMF fine-tuning initialized from iMF checkpoint'
 
-load_from: '/scratch/ymbahram/weights/iMF-XL-2-full'
+load_from: 'weights/iMF-XL-2-full'
 partial_load: True

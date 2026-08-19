@@ -1,6 +1,6 @@
 dataset:
     # Pixel-space ImageFolder root (train/<class>/*.jpg). No VAE latents.
-    root: /opt/dlami/nvme/meanflow/datasets/caltech-101_images
+    root: data/caltech-101_images
     name: imgnet_pixels
     image_size: 256
     image_channels: 3
@@ -79,13 +79,13 @@ fid:
     device_batch_size: 8
     sample_device_batch_size: 8
     num_samples: 10000
-    cache_ref: '/opt/dlami/nvme/meanflow/imeanflow/files/fid_stats/caltech-101-fid_stats.npz'
+    cache_ref: 'stats/caltech-101-fid_stats.npz'
     num_images_to_log: 16
 
 fd_dino:
     arch: vitb14
     model_name: ''
-    cache_ref: '/opt/dlami/nvme/meanflow/imeanflow/files/fdd_stats/caltech-101-fd_dino-vitb14_stats.npz'
+    cache_ref: 'stats/caltech-101-fd_dino-vitb14_stats.npz'
 
 sampling:
     num_steps: 4
@@ -97,7 +97,7 @@ sampling:
 logging:
     use_wandb: False
     wandb_project: 'jit_meft'
-    wandb_entity: 'ea-fc'
+    wandb_entity: ""
     wandb_tags:
         - caltech101
         - finetune
@@ -108,5 +108,5 @@ eval_only: False
 
 # Load the pretrained JiT-H/16-256 PyTorch weights and map them into the
 # decoupled single-head pixel-space JiT-DMF architecture (partial shape match).
-load_from: '/opt/dlami/nvme/meanflow/imeanflow/files/weights/JiT-H-16-256.pth'
+load_from: 'weights/JiT-H-16-256.pth'
 partial_load: True

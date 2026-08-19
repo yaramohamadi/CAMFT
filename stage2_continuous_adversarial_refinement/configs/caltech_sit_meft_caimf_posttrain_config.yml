@@ -1,5 +1,5 @@
 dataset:
-    root: /home/ens/Zdehghani/datasets/caltech-101_processed_latents
+    root: data/caltech-101_processed_latents
     image_size: 32
     image_channels: 4
     vae: mse
@@ -70,7 +70,7 @@ training:
     seed: 42
 
 fid:
-    cache_ref: /home/ens/Zdehghani/imeanflow/files/fid_stats/caltech-101-fid_stats.npz
+    cache_ref: stats/caltech-101-fid_stats.npz
     device_batch_size: 1
     sample_device_batch_size: 1
     sample_log_every: 25
@@ -78,7 +78,7 @@ fid:
 
 fd_dino:
     arch: vitb14
-    cache_ref: /home/ens/Zdehghani/imeanflow/files/fdd_stats/caltech-101-fd_dino-vitb14_stats.npz
+    cache_ref: stats/caltech-101-fd_dino-vitb14_stats.npz
 
 sampling:
     num_classes: 101

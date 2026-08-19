@@ -1,5 +1,5 @@
 dataset:
-    root: /home/ens/AT74470/datasets/caltech-101_processed_latents
+    root: data/caltech-101_processed_latents
     num_classes: 101
     num_classes_from_data: True
 
@@ -58,13 +58,13 @@ training:
 fid:
     device_batch_size: 8
     num_samples: 10000
-    cache_ref: '/home/ens/AT74470/imeanflow/files/fid_stats/caltech-101-fid_stats.npz'
+    cache_ref: 'stats/caltech-101-fid_stats.npz'
     num_images_to_log: 100
 
 fd_dino:
     arch: vitb14
     model_name: ''
-    cache_ref: '/home/ens/AT74470/imeanflow/files/fdd_stats/caltech-101-fd_dino-vitb14_stats.npz'
+    cache_ref: 'stats/caltech-101-fd_dino-vitb14_stats.npz'
 
 sampling:
     num_steps: 1
@@ -75,7 +75,7 @@ sampling:
 logging:
     use_wandb: True
     wandb_project: 'imfa_init'
-    wandb_entity: 'yara-mohammadi-bahram-1-ecole-superieure-de-technologie'
+    wandb_entity: ""
     wandb_tags:
         - caltech101
         - finetune
@@ -84,5 +84,5 @@ logging:
 
 # Load the pretrained SiT-XL-2-256 PyTorch weights and map them into the
 # decoupled single-head SiT-DMF architecture.
-load_from: '/home/ens/AT74470/imeanflow/files/weights/SiT-XL-2-256.pt'
+load_from: 'weights/SiT-XL-2-256.pt'
 partial_load: True

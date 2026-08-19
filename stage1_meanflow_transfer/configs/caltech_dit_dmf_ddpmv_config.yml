@@ -1,5 +1,5 @@
 dataset:
-    root: /home/ens/AT74470/datasets/caltech-101_processed_latents
+    root: data/caltech-101_processed_latents
     num_classes: 101
     num_classes_from_data: True
 
@@ -86,13 +86,13 @@ fid:
     sample_device_batch_size: 8
     sample_num_local_devices: 1
     num_samples: 5000
-    cache_ref: /home/ens/AT74470/imeanflow/files/fid_stats/caltech-101-fid_stats.npz
+    cache_ref: stats/caltech-101-fid_stats.npz
     num_images_to_log: 16
 
 fd_dino:
     arch: vitb14
     model_name: ''
-    cache_ref: /home/ens/AT74470/imeanflow/files/fdd_stats/caltech-101-fd_dino-vitb14_stats.npz
+    cache_ref: stats/caltech-101-fd_dino-vitb14_stats.npz
 
 sampling:
     num_steps: 16
@@ -104,7 +104,7 @@ logging:
     use_wandb: True
     wandb_name: CALTECH_DMF_DiTinit_DDPM-v
     wandb_project: SIT_MFA
-    wandb_entity: yara-mohammadi-bahram-1-ecole-superieure-de-technologie
+    wandb_entity: ""
     wandb_tags:
         - caltech101
         - finetune
@@ -115,5 +115,5 @@ logging:
         - target-adapter
     wandb_notes: Caltech-101 DMF fine-tuning from DiT weights with a target-side DDPM native-velocity wrapper and no Diff2Flow alignment
 
-load_from: /home/ens/AT74470/imeanflow/files/weights/DiT-XL-2-256x256.pt
+load_from: weights/DiT-XL-2-256x256.pt
 partial_load: True

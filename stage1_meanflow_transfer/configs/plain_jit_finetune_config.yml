@@ -1,5 +1,5 @@
 dataset:
-    root: /home/ens/AT74470/datasets/caltech-101_images
+    root: data/caltech-101_images
     name: imgnet_pixels
     image_size: 256
     image_channels: 3
@@ -75,13 +75,13 @@ fid:
     sample_log_every: 1
     sample_first_device_only: False
     num_samples: 10000
-    cache_ref: /home/ens/AT74470/imeanflow/files/fid_stats/caltech-101-fid_stats.npz
+    cache_ref: stats/caltech-101-fid_stats.npz
     num_images_to_log: 16
 
 fd_dino:
     arch: vitb14
     model_name: ''
-    cache_ref: /home/ens/AT74470/imeanflow/files/fdd_stats/caltech-101-fd_dino-vitb14_stats.npz
+    cache_ref: stats/caltech-101-fd_dino-vitb14_stats.npz
 
 sampling:
     num_steps: 4
@@ -97,11 +97,11 @@ logging:
     use_wandb: True
     wandb_name: ''
     wandb_project: plain_jit_finetune
-    wandb_entity: yara-mohammadi-bahram-1-ecole-superieure-de-technologie
+    wandb_entity: ""
     wandb_tags:
         - finetune
         - plain-jit
     wandb_notes: JiT-H/16 pixel-space fine-tuning
 
-load_from: /home/ens/AT74470/imeanflow/files/weights/JiT-H-16-256.pth
+load_from: weights/JiT-H-16-256.pth
 partial_load: True
