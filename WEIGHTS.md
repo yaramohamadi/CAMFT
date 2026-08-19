@@ -22,7 +22,7 @@ Notes:
 - Place all four under one folder and pass it once, for example:
 
   ```bash
-  WEIGHTS_DIR=/data/meanflow_teachers bash train_cub200.sh dit
+  WEIGHTS_DIR=/data/meanflow_teachers bash train.sh dit cub-200-2011
   ```
 
 If you keep the weights elsewhere per family, override `--config.load_from`

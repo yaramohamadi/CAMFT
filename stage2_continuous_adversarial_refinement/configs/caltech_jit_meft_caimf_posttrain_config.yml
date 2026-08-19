@@ -11,7 +11,7 @@
 # CAMF-invariant knobs (lambda_adv=1, cp=0.001, adam(0,0.95), 5000 D-warmup,
 # 4:1 D:G, 150k batches) are IDENTICAL to SiT/DiT.
 dataset:
-    root: /opt/dlami/nvme/meanflow/datasets/caltech-101_images
+    root: data/caltech-101_images
     name: imgnet_pixels
     image_size: 256
     image_channels: 3
@@ -94,7 +94,7 @@ training:
     seed: 42
 
 fid:
-    cache_ref: /opt/dlami/nvme/meanflow/imeanflow/files/fid_stats/caltech-101-fid_stats.npz
+    cache_ref: stats/caltech-101-fid_stats.npz
     device_batch_size: 4
     sample_device_batch_size: 4
     sample_log_every: 25
@@ -102,7 +102,7 @@ fid:
 
 fd_dino:
     arch: vitb14
-    cache_ref: /opt/dlami/nvme/meanflow/imeanflow/files/fdd_stats/caltech-101-fd_dino-vitb14_stats.npz
+    cache_ref: stats/caltech-101-fd_dino-vitb14_stats.npz
 
 sampling:
     num_classes: 101

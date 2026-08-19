@@ -1,0 +1,17 @@
+# run outputs
+runs/
+*.log
+
+# data and weights are not tracked (see README / WEIGHTS.md)
+data/
+weights/
+checkpoints_cub200/
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# os
+.DS_Store
