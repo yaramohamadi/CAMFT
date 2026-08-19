@@ -1,0 +1,111 @@
+# iMF (native improved-MeanFlow) CA-iMF (CAMF) pure-adversarial post-training.
+#
+# Base model: a PLAIN imfDiT_XL_2 improved-MeanFlow checkpoint (NOT a DMF
+# student). train_caimf.py accepts model_str=imfDiT_* natively, so this runs
+# through main_caimf.py directly -- no _sit_meft shim, no guard relaxation.
+#
+# Regime + schedule MIRROR the DiT/SiT CAMF sweeps (pure adversarial
+# lambda_imf=0, lambda_adv=1, lambda_cp=0.001; D-warmup 5000; 4:1 D:G;
+# 150k batches; eval@5000; save-best-fid-only; final eval NFE 1&2).
+#
+# The model + sampling blocks keep the NATIVE iMF operating point (sampled
+# guidance up to 8.0; sampling omega=7.5, t in [0.4,0.65]) -- these must match
+# the base model being post-trained, so they are NOT taken from the DiT sweep.
+#
+# Per-dataset root / num_classes / fid / fd_dino are overridden by the runner
+# (scripts/run_imf_caimf.sh); the caltech defaults below are placeholders.
+dataset:
+    root: /opt/dlami/nvme/meanflow/datasets/caltech-101_processed_latents
+    image_size: 32
+    image_channels: 4
+    vae: mse
+    name: caltech101_latent
+    num_classes: 101
+    num_classes_from_data: True
+    num_workers: 4
+    prefetch_factor: 2
+    pin_memory: True
+
+model:
+    model_str: imfDiT_XL_2
+    num_classes: 101
+    training_mode: imf_jvp
+    target_use_null_class: True
+    use_auxiliary_v_head: True
+    use_dogfit: False
+    class_dropout_prob: 0.1
+    cfg_beta: 1.0
+    guidance_scale_strategy: sampled
+    max_sampled_guidance_scale: 8.0
+
+caimf:
+    lambda_imf: 0.0
+    lambda_adv: 1.0
+    lambda_ot: 0.0
+    lambda_cp: 0.001
+    interval_eps: 0.001
+    gen_learning_rate: 0.00001
+    dis_learning_rate: 0.00001
+    adam_beta1: 0.0
+    adam_beta2: 0.95
+    weight_decay: 0.0
+    discriminator_warmup_batches: 5000
+    discriminator_steps_per_cycle: 4
+    discriminator_updates: True
+    freeze_discriminator_backbone: False
+    # iMF finetune checkpoints were trained with use_ema=False -> restore raw params.
+    load_generator_ema: False
+    max_posttrain_batches: 150000
+    resume_from: ""  # full-state workdir/checkpoint_* to continue from (empty = fresh warm-start)
+
+training:
+    num_epochs: 1000
+    batch_size: 2
+    grad_accum_steps: 1
+    use_ema: True
+    ema_val: 0.9999
+    log_per_step: 100
+    checkpoint_per_epoch: 1
+    sample_per_step: 5000
+    preview_num_steps: [1, 2, 4]
+    preview_num_images: 16
+    fid_per_step: 0
+    fid_schedule:
+        - from_step: 5000
+          every_steps: 5000
+    metric_num_steps: [4]
+    save_best_fid_only: True
+    save_best_fid_eval_state_only: True
+    best_fid_checkpoint_dir: best_fid
+    save_eval_checkpoint_per_fid: False
+    eval_checkpoint_dir: latest_eval
+    seed: 42
+
+fid:
+    cache_ref: /opt/dlami/nvme/meanflow/imeanflow_adversarial/files/fid_stats/caltech-101-fid_stats.npz
+    device_batch_size: 1
+    sample_device_batch_size: 1
+    sample_log_every: 25
+    num_samples: 10000
+
+fd_dino:
+    arch: vitb14
+    cache_ref: /opt/dlami/nvme/meanflow/imeanflow_adversarial/files/fdd_stats/caltech-101-fd_dino-vitb14_stats.npz
+
+sampling:
+    num_classes: 101
+    num_steps: 4
+    omega: 7.5
+    t_min: 0.4
+    t_max: 0.65
+
+logging:
+    use_wandb: False
+    wandb_project: caimf_imf
+    wandb_name: caltech_imf_caimf
+    wandb_entity: ""
+    wandb_tags: [caltech101, imf, caimf, posttrain]
+    wandb_notes: iMF-finetuned -> CAMF pure-adversarial post-training
+
+load_from: ""
+partial_load: True
