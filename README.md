@@ -44,8 +44,8 @@ Every run in the paper used a single 80 GB H100.
   | ------ | --------------------- | -------- | ---- |
   | `dit`  | `DiT-XL-2-256x256.pt` | [direct link](https://dl.fbaipublicfiles.com/DiT/models/DiT-XL-2-256x256.pt) ([DiT repo](https://github.com/facebookresearch/DiT)) | 2.7 GB |
   | `sit`  | `SiT-XL-2-256.pt`     | [Dropbox](https://www.dl.dropboxusercontent.com/scl/fi/as9oeomcbub47de5g4be0/SiT-XL-2-256.pt?rlkey=uxzxmpicu46coq3msb17b9ofa&dl=0) ([SiT repo](https://github.com/willisma/SiT)) | 2.7 GB |
-  | `jit`  | `JiT-H-16-256.pth`    | [Dropbox folder](https://www.dropbox.com/scl/fo/3ken1avtsd81ip67b9qpi/AK218ZNvXKSv74igVvht4PQ?rlkey=14gjrblmljewpl6ygxzlr3njm&dl=0) ([JiT repo](https://github.com/LTH14/JiT)) | — |
-  | `imf`  | `iMF-XL-2-full`       | [`iMF-XL-2-full.zip`](https://huggingface.co/Lyy0725/iMF/blob/main/iMF-XL-2-full.zip) ([iMF repo](https://github.com/Lyy-iiis/imeanflow)) | 10.5 GB |
+  | `jit`  | `JiT-H-16-256.pth`    | [Dropbox folder](https://www.dropbox.com/scl/fo/3ken1avtsd81ip67b9qpi/AK218ZNvXKSv74igVvht4PQ?rlkey=14gjrblmljewpl6ygxzlr3njm&dl=0) ([JiT repo](https://github.com/LTH14/JiT)) | 11.4 GB |
+  | `imf`  | `iMF-XL-2-full`  (directory)     | [`iMF-XL-2-full.zip`](https://huggingface.co/Lyy0725/iMF/blob/main/iMF-XL-2-full.zip) ([iMF repo](https://github.com/Lyy-iiis/imeanflow)) | 10.5 GB |
 
 # Pretrained teacher weights
 
@@ -59,7 +59,7 @@ keep them). The launchers expect these filenames:
 | `dit`  | `DiT-XL-2-256x256.pt`     | DiT (Peebles and Xie), the official `DiT-XL/2` 256x256 checkpoint |
 | `sit`  | `SiT-XL-2-256.pt`         | SiT (Ma et al.), the official `SiT-XL/2` 256x256 checkpoint |
 | `jit`  | `JiT-H-16-256.pth`        | JiT (the "just image transformers" pixel-space model), `JiT-H/16` at 256 |
-| `imf`  | `iMF-XL-2-full`           | improved MeanFlow `XL/2`, saved as a checkpoint directory |
+| `imf`  | `iMF-XL-2-full`          | improved MeanFlow `XL/2`, saved as a checkpoint directory |
 
 Notes:
 
