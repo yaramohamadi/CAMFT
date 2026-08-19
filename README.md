@@ -7,24 +7,10 @@ The pipeline has two stages, run in order:
 
 1. **[Stage 1: MeanFlow-Transfer](#stage-1-meanflow-transfer-mf-t).** Fine-tune a
    pretrained ImageNet teacher into a MeanFlow student on the target domain. The
-   student samples in a handful of steps and inherits the teacher's
-   classifier-free guidance behaviour.
+   student samples in a handful of step. First stage supports four teacher families, spanning all four prediction
+parameterizations (mean velocity u, velocity v, noise eps, data x). 
 2. **[Stage 2: Continuous Adversarial MeanFlow](#stage-2-continuous-adversarial-meanflow-camf).**
-   Refine the Stage 1 student with pure adversarial post-training. The generator
-   keeps its guidance behaviour; a discriminator scores the guided few-step
-   endpoint, sharpening the one and two step samples.
-
-First stage supports four teacher families, spanning all four prediction
-parameterizations:
-
-| family | teacher                | predicts        | space  |
-| ------ | ---------------------- | --------------- | ------ |
-| `imf`  | improved MeanFlow XL/2 | mean velocity u | latent |
-| `sit`  | SiT-XL/2               | velocity v      | latent |
-| `dit`  | DiT-XL/2               | noise eps       | latent |
-| `jit`  | JiT-H/16               | input x         | pixel  |
-
-Second stage supports MeanFlow family models, which can be derived from the first stage. 
+   Refine the trained Stage 1 student with pure adversarial post-training. Second stage supports MeanFlow models even if they are not derived from our first stage.
 
 ## Setup
 
