@@ -160,15 +160,15 @@ For questions about the code, please open an
 
 ## Citation
 
-The paper is currently under review. 
+The paper is currently under review. Stay tuned for updated citation.
 
 ```bibtex
 @article{camft2027,
   title  = {Adaptation and Acceleration of Diffusion and Flow Models via
             MeanFlow Transfer and Continuous Adversarial Refinement},
-  author = {Anonymous},
+  author = {Yara Bahram, Zahra Dehghani, Mélodie Desbos, Eric Granger, Pablo Piantanida, Mohammadhadi Shateri},
   note   = {Under review},
-  year   = {2026}
+  year   = {2027}
 }
 ```
 
