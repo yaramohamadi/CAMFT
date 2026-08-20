@@ -120,10 +120,6 @@ stripped):
 
 <!-- TODO: add the Hugging Face download link once the export is uploaded. -->
 
-Each is an Orbax checkpoint directory holding the EMA parameters, and restores
-with `--config.load_from=/path/to/checkpoint_dir`. One exception: the Stage 1
-`jit` run was trained without EMA, so its generator is the raw `params` tree.
-
 ## Reproducing the Paper
 
 Every metric uses 10,000 samples. FID uses the InceptionV3 references in `stats/`
