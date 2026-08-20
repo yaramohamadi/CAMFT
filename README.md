@@ -1,8 +1,6 @@
 # Continuous Adversarial MeanFlow Transfer
 Official code for *Continuous Adversarial MeanFlow Transfer*.
 
-## Method
-
 The pipeline has two stages, run in order:
 
 1. **[Stage 1: MeanFlow-Transfer](#stage-1-meanflow-transfer-mf-t).** Fine-tune a
