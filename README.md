@@ -4,7 +4,7 @@ This is the official JAX implementation for the paper *Continuous Adversarial Me
 **[Project page](https://yasaman-dt.github.io/CAMFT/)**
 
 <p align="center">
-  <img src="assets/teaser.png" alt="MeanFlow-Transfer and Continuous Adversarial MeanFlow Refinement" width="600">
+  <img src="assets/teaser.png" alt="MeanFlow-Transfer and Continuous Adversarial MeanFlow Refinement" width="200">
 </p>
 
 
