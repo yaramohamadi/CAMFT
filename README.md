@@ -3,11 +3,6 @@ This is the official JAX implementation for the paper *Continuous Adversarial Me
 
 **[Project page](https://yasaman-dt.github.io/CAMFT/)**
 
-<p align="center">
-  <img src="assets/teaser.png" alt="MeanFlow-Transfer and Continuous Adversarial MeanFlow Refinement" width="200">
-</p>
-
-
 The pipeline has two stages, run in order:
 
 1. **[Stage 1: MeanFlow-Transfer](#stage-1-meanflow-transfer-mf-t).** Fine-tune a
