@@ -5,11 +5,11 @@ This is the official JAX implementation for the paper *Continuous Adversarial Me
 
 The pipeline has two stages, run in order:
 
-1. **[Stage 1: MeanFlow-Transfer](#stage-1-meanflow-transfer-mf-t).** Fine-tune a
+1. **[Stage 1: MeanFlow-Transfer](stage1_meanflow_transfer).** Fine-tune a
    pretrained ImageNet teacher into a MeanFlow student on the target domain. The
    student samples in a handful of step. First stage supports four teacher families, spanning all four prediction
 parameterizations (mean velocity u, velocity v, noise eps, data x). 
-2. **[Stage 2: Continuous Adversarial MeanFlow](#stage-2-continuous-adversarial-meanflow-camf).**
+2. **[Stage 2: Continuous Adversarial MeanFlow](stage2_continuous_adversarial_refinement).**
    Refine the trained stage 1 student with pure adversarial post-training. Stage 2 supports MeanFlow models even if they are not derived from stage 1.
 
 ## Setup
