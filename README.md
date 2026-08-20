@@ -105,16 +105,25 @@ The four Stage 1 and four Stage 2 generators for **CUB-200-2011** are released
 separately (fp32 generator weights only — optimizer and discriminator state are
 stripped):
 
-| stage | family | params | fp32 size |
-| ----- | ------ | ------ | --------- |
-| 1     | `dit`  | 674 M  | 2.70 GB   |
-| 1     | `sit`  | 674 M  | 2.70 GB   |
-| 1     | `jit`  | 952 M  | 3.81 GB   |
-| 1     | `imf`  | 710 M  | 2.84 GB   |
-| 2     | `dit`  | 674 M  | 2.70 GB   |
-| 2     | `sit`  | 674 M  | 2.70 GB   |
-| 2     | `jit`  | 952 M  | 3.81 GB   |
-| 2     | `imf`  | 710 M  | 2.84 GB   |
+| stage | family | checkpoint | params  | step    | fp32 size |
+| ----- | ------ | ---------- | ------- | ------- | --------- |
+| 1     | `dit`  | [`stage1_dit`][s1-dit] | 674.2 M | 27,500  | 2.51 GB |
+| 1     | `sit`  | [`stage1_sit`][s1-sit] | 674.2 M | 20,000  | 2.51 GB |
+| 1     | `jit`  | [`stage1_jit`][s1-jit] | 951.8 M | 27,500  | 3.53 GB |
+| 1     | `imf`  | [`stage1_imf`][s1-imf] | 710.3 M | 35,000  | 2.64 GB |
+| 2     | `dit`  | [`stage2_dit`][s2-dit] | 674.2 M | 115,000 | 2.51 GB |
+| 2     | `sit`  | [`stage2_sit`][s2-sit] | 674.2 M | 70,000  | 2.51 GB |
+| 2     | `jit`  | [`stage2_jit`][s2-jit] | 951.8 M | 60,000  | 3.53 GB |
+| 2     | `imf`  | [`stage2_imf`][s2-imf] | 710.3 M | 65,000  | 2.64 GB |
+
+[s1-dit]: https://huggingface.co/elbahramino/CAMFT-CUB200/tree/main/stage1_dit
+[s1-sit]: https://huggingface.co/elbahramino/CAMFT-CUB200/tree/main/stage1_sit
+[s1-jit]: https://huggingface.co/elbahramino/CAMFT-CUB200/tree/main/stage1_jit
+[s1-imf]: https://huggingface.co/elbahramino/CAMFT-CUB200/tree/main/stage1_imf
+[s2-dit]: https://huggingface.co/elbahramino/CAMFT-CUB200/tree/main/stage2_dit
+[s2-sit]: https://huggingface.co/elbahramino/CAMFT-CUB200/tree/main/stage2_sit
+[s2-jit]: https://huggingface.co/elbahramino/CAMFT-CUB200/tree/main/stage2_jit
+[s2-imf]: https://huggingface.co/elbahramino/CAMFT-CUB200/tree/main/stage2_imf
 
 <!-- TODO: add the Hugging Face download link once the export is uploaded. -->
 
