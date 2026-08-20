@@ -1,5 +1,9 @@
 # Continuous Adversarial MeanFlow Transfer
-Official code for *Continuous Adversarial MeanFlow Transfer*.
+This is the official JAX implementation for the paper *Continuous Adversarial MeanFlow Transfer*. This code is written and tested on GPUs.
+
+TODO: add project page https://yasaman-dt.github.io/CAMFT/ 
+TODO: add figure<img width="1023" height="1059" alt="1_teaser" src="https://github.com/user-attachments/assets/70d039e8-0c26-4375-a740-f8e1afabb725" />
+
 
 The pipeline has two stages, run in order:
 
