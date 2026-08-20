@@ -9,11 +9,6 @@ Only the generator parameters are restored from Stage 1; the optimizer and the
 discriminator start fresh. Stage 2 accepts any MeanFlow model, not only students
 produced by Stage 1.
 
-- [Quick Start](#quick-start)
-- [Families](#families)
-- [Config](#config)
-- [Final NFE 1 and 2 Evaluation](#final-nfe-1-and-2-evaluation)
-- [Structure](#structure)
 
 ## Quick Start
 
