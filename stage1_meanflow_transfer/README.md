@@ -5,12 +5,6 @@ target domain. The student learns to jump across the flow in a handful of steps 
 keeps the teacher's classifier-free guidance behaviour. Four teacher families are
 supported, spanning all four prediction parameterizations.
 
-- [Quick Start](#quick-start)
-- [Families](#families)
-- [Config](#config)
-- [Evaluating a Checkpoint](#evaluating-a-checkpoint)
-- [Structure](#structure)
-
 ## Quick Start
 
 ```bash
