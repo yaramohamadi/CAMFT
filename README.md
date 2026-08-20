@@ -185,4 +185,6 @@ The paper is currently under review. Stay tuned for updated citation.
 
 ## Acknowledgments
 
+This work was done in collaboration while Yara Bahram and Yasaman (Zahra) Dehghani Tafti were full-time students at LIVIA - ILLS - ETS. This research was supported by the Natural Sciences and Engineering Research Council of Canada, and the Digital Research Alliance of Canada.
+
 This work builds directly on open-source releases of DiT, SiT, JiT, and iMF, and Adversarial-Flow-Models. We thank the authors of these projects for their codes.
