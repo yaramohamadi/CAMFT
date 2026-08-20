@@ -152,9 +152,6 @@ alongside `MF-T` come from the plain fine-tuning configs
   (`afm*.py`), the original instantaneous CAFM discriminator
   (`cafm_imf_discriminator.py`), the pMF perceptual variant (`pmf*.py`), and
   DogFit, which is off in every config.
-- Trained weights other than the CUB-200 release above are not distributed. Only
-  the pretrained teacher weights are needed to reproduce a run from scratch, and
-  those come from their original public sources.
 
 ## Contact
 
@@ -163,7 +160,7 @@ For questions about the code, please open an
 
 ## Citation
 
-The paper is currently under review. Please check back for the final reference.
+The paper is currently under review. 
 
 ```bibtex
 @article{camft2027,
@@ -177,33 +174,4 @@ The paper is currently under review. Please check back for the final reference.
 
 ## Acknowledgments
 
-This work builds directly on several open-source releases, and this repository
-adapts code from them:
-
-- [DiT](https://github.com/facebookresearch/DiT) and
-  [SiT](https://github.com/willisma/SiT) — the latent-space transformer backbone
-  and two of the ImageNet-256 teacher checkpoints.
-- [JiT](https://github.com/LTH14/JiT) — the pixel-space transformer, ported to
-  Flax here as `models/jit.py`.
-- MeanFlow and improved MeanFlow — the average-velocity objective that `MF-T`
-  targets and the fourth teacher.
-- [FLIP](https://github.com/facebookresearch/flip),
-  [MAE](https://github.com/facebookresearch/mae),
-  [t5x](https://github.com/google-research/t5x), and
-  [Flax](https://github.com/google/flax) — JAX/Flax training-state, sharding,
-  position-embedding, and layer utilities.
-- [guided-diffusion](https://github.com/openai/guided-diffusion) and
-  [glide-text2im](https://github.com/openai/glide-text2im) — the DDPM schedules
-  and sampler, reimplemented in JAX as `utils/dit_diffusion.py`.
-- [pytorch-fid](https://github.com/mseitzer/pytorch-fid) and
-  [torchvision](https://github.com/pytorch/vision) — the InceptionV3 definition
-  behind `utils/jax_fid/`.
-- [diffusers](https://github.com/huggingface/diffusers) — the Flax VAE used to
-  decode latents for previews.
-- [DINOv2](https://github.com/facebookresearch/dinov2) — the FD-DINO feature
-  extractor, reimplemented in pure JAX here as `utils/dinov2_jax.py`.
-- [ConvNeXt](https://github.com/facebookresearch/ConvNeXt) — perceptual features
-  for the auxiliary loss.
-
-The teacher checkpoints and the datasets carry their own licenses; please follow
-the terms of each original source.
+This work builds directly on open-source releases of DiT, SiT, JiT, and iMF, and Adversarial-Flow-Models. We thank the authors of these projects for their codes.
