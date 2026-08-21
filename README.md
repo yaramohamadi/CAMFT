@@ -174,12 +174,14 @@ For questions about the code, please open an
 The paper is currently under review. Stay tuned for updated citation.
 
 ```bibtex
-@article{camft2027,
-  title  = {Adaptation and Acceleration of Diffusion and Flow Models via
-            MeanFlow Transfer and Continuous Adversarial Refinement},
-  author = {Yara Bahram, Zahra Dehghani, Mélodie Desbos, Eric Granger, Pablo Piantanida, Mohammadhadi Shateri},
-  note   = {Under review},
-  year   = {2027}
+@misc{bahram2026continuousadversarialmeanflowtransfer,
+      title={Continuous Adversarial MeanFlow Transfer}, 
+      author={Yara Bahram and Zahra Dehghani and Mélodie Desbos and Eric Granger and Pablo Piantanida and Mohammadhadi Shateri},
+      year={2026},
+      eprint={2608.19540},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2608.19540}, 
 }
 ```
 
