@@ -3,10 +3,10 @@
 # lack final_eval_metrics.csv. Each eval claims the shared GPU lock so the live
 # caimf_jit_watcher can't double-claim. Detached screens; laptop can close.
 set -uo pipefail
-ADV=/opt/dlami/nvme/meanflow/imeanflow_adversarial
-MAIN=/opt/dlami/nvme/meanflow/imeanflow
+ADV="${ADV:-/path/to/stage2_continuous_adversarial_refinement}"
+MAIN="${MAIN:-/path/to/stage1_meanflow_transfer}"
 PY=$MAIN/.venv/bin/python
-DATA=/opt/dlami/nvme/meanflow/datasets
+DATA="${DATA:-/path/to/datasets}"
 cd "$ADV"
 source "$ADV/scripts/gpu_lock.inc.sh"
 EVAL_LATENT=scripts/eval_best_fid_steps_sit_meft_adversarial.sh   # DiT/SiT (latent, main.py+VAE)
