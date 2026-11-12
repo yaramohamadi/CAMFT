@@ -1,5 +1,5 @@
-# Continuous Adversarial MeanFlow Transfer
-This is the official JAX implementation for the paper *Continuous Adversarial MeanFlow Transfer*. This code is written and tested on GPUs.
+# Continuous Adversarial MeanFlow for Few-Step Generative Adaptation from Any Parameterization
+This is the official JAX implementation for the paper *Continuous Adversarial MeanFlow for Few-Step Generative Adaptation from Any Parameterization*. This code is written and tested on GPUs.
 
 **[Project page](https://yasaman-dt.github.io/CAMFT/)**
 
