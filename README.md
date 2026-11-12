@@ -109,15 +109,21 @@ stripped):
 | ----- | ------ | ---------- | ------- | ------- | --- | ----- | ------ | --------- |
 | 1     | `dit`  | [`stage1_dit`][s1-dit] | 674.2 M | 27,500  | 8 | 8.27  | 222.81 | 2.51 GB |
 | 1     | `sit`  | [`stage1_sit`][s1-sit] | 674.2 M | 20,000  | 4 | 5.25  | 205.34 | 2.51 GB |
-| 1     | `jit`  | [`stage1_jit`][s1-jit] | 951.8 M | 27,500  | 4 | 14.65 | 417.14 | 3.53 GB |
-| 1     | `imf`  | [`stage1_imf`][s1-imf] | 710.3 M | 35,000  | 4 | 7.26  | 310.62 | 2.64 GB |
+| 1     | `jit`  | [`stage1_jit`][s1-jit] | 951.8 M | 27,500  | 4 | 14.65 | 417.08 | 3.53 GB |
+| 1     | `imf`  | [`stage1_imf`][s1-imf] | 710.3 M | 35,000  | 4 | 5.33  | 160.65 | 2.64 GB |
 | 2     | `dit`  | [`stage2_dit`][s2-dit] | 674.2 M | 115,000 | 8 | 3.70  | 100.97 | 2.51 GB |
 | 2     | `sit`  | [`stage2_sit`][s2-sit] | 674.2 M | 70,000  | 4 | 3.91  | 133.85 | 2.51 GB |
 | 2     | `jit`  | [`stage2_jit`][s2-jit] | 951.8 M | 60,000  | 4 | 7.29  | 311.59 | 3.53 GB |
 | 2     | `imf`  | [`stage2_imf`][s2-imf] | 710.3 M | 65,000  | 4 | 2.88  | 84.24  | 2.64 GB |
 
-FID and FDD (FD-DINOv2) are the CUB-200-2011 values from Table 2 of the paper: 10,000
-samples against the references in `stats/`. Stage 2 numbers use the EMA weights.
+FID and FDD (FD-DINOv2) are measured on these exact checkpoints for CUB-200-2011, with
+10,000 samples against the references in `stats/`. They can differ slightly from Table 2
+of the paper.
+
+Stage 2 numbers use the EMA weights, which the released Stage 2 checkpoints hold. For
+`jit`, pass `--config.training.use_ema=True` when you evaluate or sample. Without it the
+JiT evaluation uses the online weights and gives a worse FID (10.46 instead of 7.29 at
+4 NFE).
 
 [s1-dit]: https://huggingface.co/elbahramino/CAMFT-CUB200/tree/main/stage1_dit
 [s1-sit]: https://huggingface.co/elbahramino/CAMFT-CUB200/tree/main/stage1_sit
@@ -173,8 +179,8 @@ For questions about the code, please open an
 The paper is currently under review. Stay tuned for updated citation.
 
 ```bibtex
-@misc{bahram2026continuousadversarialmeanflowtransfer,
-      title={Continuous Adversarial MeanFlow Transfer}, 
+@misc{bahram2026continuousadversarialmeanflow,
+      title={Continuous Adversarial MeanFlow for Few-Step Generative Adaptation from Any Parameterization}, 
       author={Yara Bahram and Zahra Dehghani and Mélodie Desbos and Eric Granger and Pablo Piantanida and Mohammadhadi Shateri},
       year={2026},
       eprint={2608.19540},
@@ -183,6 +189,14 @@ The paper is currently under review. Stay tuned for updated citation.
       url={https://arxiv.org/abs/2608.19540}, 
 }
 ```
+
+## License
+
+This code is released under [CC BY-NC 4.0](LICENSE), the license of DiT, from which part
+of the code and the DiT-XL/2 teacher weights come. Code adapted from iMF, SiT, JiT and
+Adversarial Flow Models keeps its MIT license; see
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). The released checkpoints are also
+CC BY-NC 4.0. Each teacher checkpoint follows the license of its own repository.
 
 ## Acknowledgments
 
