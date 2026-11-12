@@ -1,5 +1,5 @@
 # Continuous Adversarial MeanFlow for Few-Step Generative Adaptation from Any Parameterization
-This is the official JAX implementation for the paper *Continuous Adversarial MeanFlow for Few-Step Generative Adaptation from Any Parameterization*. This code is written and tested on GPUs.
+This is the official JAX implementation for the paper *Continuous Adversarial MeanFlow for Few-Step Generative Adaptation from Any Parameterization*. This code is tested on a single 80 GB H100 GPU.
 
 **[Project page](https://yasaman-dt.github.io/CAMFT/)**
 
@@ -7,7 +7,7 @@ The pipeline has two stages, run in order:
 
 1. **[Stage 1: MeanFlow-Transfer](stage1_meanflow_transfer).** Fine-tune a
    pretrained ImageNet teacher into a MeanFlow student on the target domain. The
-   student samples in a handful of step. First stage supports four teacher families, spanning all four prediction
+   student samples in a handful of steps. First stage supports four teacher families, spanning all four prediction
 parameterizations (mean velocity u, velocity v, noise eps, data x). 
 2. **[Stage 2: Continuous Adversarial MeanFlow](stage2_continuous_adversarial_refinement).**
    Refine the trained stage 1 student with pure adversarial post-training. Stage 2 supports MeanFlow models even if they are not derived from stage 1.
@@ -31,8 +31,6 @@ pip install -r requirements.txt
 The pinned set installs `torch` as a **CPU** build on purpose. Torch is only used
 to read the released PyTorch teacher checkpoints on the host before their tensors
 are converted to JAX arrays; all training and sampling runs in JAX.
-
-Every run in the paper used a single 80 GB H100.
 
 ### Teacher Weights
 
@@ -107,16 +105,19 @@ The four Stage 1 and four Stage 2 generators for **CUB-200-2011** are released
 separately (fp32 generator weights only — optimizer and discriminator state are
 stripped):
 
-| stage | family | checkpoint | params  | step    | fp32 size |
-| ----- | ------ | ---------- | ------- | ------- | --------- |
-| 1     | `dit`  | [`stage1_dit`][s1-dit] | 674.2 M | 27,500  | 2.51 GB |
-| 1     | `sit`  | [`stage1_sit`][s1-sit] | 674.2 M | 20,000  | 2.51 GB |
-| 1     | `jit`  | [`stage1_jit`][s1-jit] | 951.8 M | 27,500  | 3.53 GB |
-| 1     | `imf`  | [`stage1_imf`][s1-imf] | 710.3 M | 35,000  | 2.64 GB |
-| 2     | `dit`  | [`stage2_dit`][s2-dit] | 674.2 M | 115,000 | 2.51 GB |
-| 2     | `sit`  | [`stage2_sit`][s2-sit] | 674.2 M | 70,000  | 2.51 GB |
-| 2     | `jit`  | [`stage2_jit`][s2-jit] | 951.8 M | 60,000  | 3.53 GB |
-| 2     | `imf`  | [`stage2_imf`][s2-imf] | 710.3 M | 65,000  | 2.64 GB |
+| stage | family | checkpoint | params  | step    | NFE | FID ↓ | FDD ↓  | fp32 size |
+| ----- | ------ | ---------- | ------- | ------- | --- | ----- | ------ | --------- |
+| 1     | `dit`  | [`stage1_dit`][s1-dit] | 674.2 M | 27,500  | 8 | 8.27  | 222.81 | 2.51 GB |
+| 1     | `sit`  | [`stage1_sit`][s1-sit] | 674.2 M | 20,000  | 4 | 5.25  | 205.34 | 2.51 GB |
+| 1     | `jit`  | [`stage1_jit`][s1-jit] | 951.8 M | 27,500  | 4 | 14.65 | 417.14 | 3.53 GB |
+| 1     | `imf`  | [`stage1_imf`][s1-imf] | 710.3 M | 35,000  | 4 | 7.26  | 310.62 | 2.64 GB |
+| 2     | `dit`  | [`stage2_dit`][s2-dit] | 674.2 M | 115,000 | 8 | 3.70  | 100.97 | 2.51 GB |
+| 2     | `sit`  | [`stage2_sit`][s2-sit] | 674.2 M | 70,000  | 4 | 3.91  | 133.85 | 2.51 GB |
+| 2     | `jit`  | [`stage2_jit`][s2-jit] | 951.8 M | 60,000  | 4 | 7.29  | 311.59 | 3.53 GB |
+| 2     | `imf`  | [`stage2_imf`][s2-imf] | 710.3 M | 65,000  | 4 | 2.88  | 84.24  | 2.64 GB |
+
+FID and FDD (FD-DINOv2) are the CUB-200-2011 values from Table 2 of the paper: 10,000
+samples against the references in `stats/`. Stage 2 numbers use the EMA weights.
 
 [s1-dit]: https://huggingface.co/elbahramino/CAMFT-CUB200/tree/main/stage1_dit
 [s1-sit]: https://huggingface.co/elbahramino/CAMFT-CUB200/tree/main/stage1_sit
@@ -126,8 +127,6 @@ stripped):
 [s2-sit]: https://huggingface.co/elbahramino/CAMFT-CUB200/tree/main/stage2_sit
 [s2-jit]: https://huggingface.co/elbahramino/CAMFT-CUB200/tree/main/stage2_jit
 [s2-imf]: https://huggingface.co/elbahramino/CAMFT-CUB200/tree/main/stage2_imf
-
-<!-- TODO: add the Hugging Face download link once the export is uploaded. -->
 
 ## Reproducing the Paper
 
@@ -187,7 +186,7 @@ The paper is currently under review. Stay tuned for updated citation.
 
 ## Acknowledgments
 
-This research was supported by the Natural Sciences and Engineering Research Council of Canada, and the Digital Research Alliance of Canada.
+This research was supported by Electronic Arts, the Natural Sciences and Engineering Research Council of Canada, and the Digital Research Alliance of Canada.
 
 This work builds directly on open-source releases of DiT, SiT, JiT, and iMF, and Adversarial-Flow-Models. We thank the authors of these projects for their codes.
 

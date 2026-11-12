@@ -2,7 +2,7 @@
 
 Pure adversarial post-training of a Stage 1 student: `lambda_imf = 0`, so the
 MeanFlow regression term is off and a discriminator scores the guided
-finite-interval endpoint. This is what sharpens the 1- and 2-step samples.
+finite-interval endpoint. This is what sharpens the few-step samples.
 
 Only the generator is restored from Stage 1; the optimizer and discriminator start
 fresh. Any MeanFlow model works here, not just Stage 1 output.
@@ -65,10 +65,11 @@ caimf:
 Post-training tracks an EMA of the generator (`use_ema: True`, `ema_val: 0.9999`),
 and the released Stage 2 checkpoints are that EMA tree.
 
-## Final NFE 1 and 2 Evaluation
+## Final Evaluation at Other NFEs
 
-Post-training evaluates at NFE 4 on a schedule. The headline numbers are at NFE 1
-and 2, from a separate pass:
+Post-training evaluates at NFE 4 on a schedule. The paper reports NFE 4 for `imf`,
+`sit` and `jit`, and NFE 8 for `dit`. Other NFEs (here 1 and 2) come from a
+separate pass:
 
 ```bash
 CONFIG_MODE=caltech_dit_meft_caimf_posttrain \
